@@ -24,16 +24,19 @@ namespace Bank.Test.Entities
             accountMock.Balance = 1000;
             double interest = 1.10;
 
-            double balanceRes = 1100;
+            _mock.Setup(x => x.AddInterest(It.IsAny<double>())).Returns(accountMock.AddInterest(interest));
+            double balanceRes = accountMock.Balance;
             double balanceUpdated = accountMock.AddInterest(interest);
             Assert.AreEqual(balanceRes, balanceUpdated);
         }
+
         [TestMethod]
         public void BankAccount_AddCredit_BalancePlusCredit_Success()
         {
             accountMock.Balance = 1000;
             double amount = 200;
 
+            _mock.Setup(x => x.Credit(It.IsAny<double>()));
             double expected = 1200;
             double reality = accountMock.Credit(amount);
             Assert.AreEqual(expected, reality);
@@ -44,6 +47,7 @@ namespace Bank.Test.Entities
         {
             accountMock.Balance = 1000;
             double amount = -200;
+            _mock.Setup(x => x.Credit(It.IsAny<double>()));
             Assert.ThrowsException<Exception>(() => accountMock.Credit(amount));
         }
 
@@ -52,7 +56,7 @@ namespace Bank.Test.Entities
         {
             accountMock.Balance = 1000;
             double amount = 200;
-
+            _mock.Setup(x => x.Debit(It.IsAny<double>()));
             double expected = 795;
             double reality = accountMock.Debit(amount);
             Assert.AreEqual(expected, reality);
@@ -62,6 +66,7 @@ namespace Bank.Test.Entities
         public void BankAccount_Debit_BalanceLessCredit_FailMinorZero()
         {
             double amount = -200;
+            _mock.Setup(x => x.Debit(It.IsAny<double>()));
             Assert.ThrowsException<Exception>(() => accountMock.Debit(amount));
         }
 
@@ -70,6 +75,7 @@ namespace Bank.Test.Entities
         {
             double amount = 1000;
             accountMock.Balance = 500;
+            _mock.Setup(x => x.Debit(It.IsAny<double>()));
             Assert.ThrowsException<Exception>(() => accountMock.Debit(amount));
         }
     }
